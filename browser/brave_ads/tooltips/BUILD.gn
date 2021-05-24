@@ -1,0 +1,14 @@
+source_set("tooltips") {
+  sources = [
+    "ad_tooltip_platform_bridge.h",
+    "ad_tooltip_platform_bridge.cc"
+  ]
+
+  deps = [
+    "//base",
+    "//brave/browser/brave_ads",
+    "//brave/browser/profiles:util",
+    "//brave/browser/ui/brave_ads",
+    "//skia",
+  ]
+}
