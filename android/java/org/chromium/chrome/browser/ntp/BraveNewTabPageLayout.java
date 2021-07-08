@@ -537,7 +537,7 @@ initNews();
     }
 
     private void initNews() {
-        Log.d("test", "in initNews");
+        Log.d("bravenews", "in initNews");
         recyclerView = findViewById(R.id.newsRecycler);
         container = (LinearLayout) findViewById(R.id.ntp_main_layout);
         nestedScrollView = findViewById(R.id.nestedScrollView);
@@ -562,17 +562,17 @@ initNews();
         optinButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.d("test", "optin click");
+                        Log.d("bravenews", "optin click");
                         optinLayout.setVisibility(View.GONE);
                         loadingView.setVisibility(View.VISIBLE);
 
                         new Thread( new Runnable() { @Override public void run() {
-                            Log.d("test", "getting feed...");
+                            Log.d("bravenews", "getting feed...");
                             getFeed();
                             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Log.d("test", "optin click after");
+                                    Log.d("bravenews", "optin click after");
 
                                     loadingView.setVisibility(View.GONE);
 
@@ -594,7 +594,7 @@ initNews();
     private void getFeed() {
         BraveNewsUtils utils = new BraveNewsUtils(mActivity);
         newsItems = utils.parseJson(newsItems);
-        Log.d("test", "end parse");
+        Log.d("bravenews", "end parse");
     }
 
     @Override
@@ -786,6 +786,11 @@ initNews();
         @Override
         public void bgWallpaperRetrieved(Bitmap bgWallpaper) {
             bgImageView.setImageBitmap(bgWallpaper);
+            // bgImageView.setVisibility(View.GONE);
+            // BitmapDrawable bitmapDrawable = new BitmapDrawable(bgWallpaper);
+            // bitmapDrawable.setGravity(Gravity.BOTTOM|Gravity.RIGHT);
+            // bitmapDrawable.setGravity(Gravity.CENTER);
+            // container.setBackgroundDrawable(bitmapDrawable);
         }
 
         @Override
@@ -1090,16 +1095,16 @@ initNews();
 
     @Override
     public void onCloseClick(View view) {
-        Log.d("Test", "close click");
+        Log.d("bravenews", "close click");
     }
     
     @Override
     public void onOptInClick(View view) {
-        Log.d("Test", "optin click");
+        Log.d("bravenews", "optin click");
     }
 
     @Override
     public void onItemClick(View view, int position) {
-        Log.d("test", "You clicked " + adapter.getItem(position) + " on row number " + position);
+        Log.d("bravenews", "You clicked " + adapter.getItem(position) + " on row number " + position);
     }    
 }

@@ -47,7 +47,7 @@
     <LinearLayout
         android:id="@+id/parent_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:orientation="vertical">
 
@@ -176,8 +176,8 @@
                     android:layout_weight="1"
                     android:visibility="gone" />
 
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+
+
 
         <FrameLayout
             android:id="@+id/image_credit_layout"
@@ -204,6 +204,10 @@
                 android:visibility="gone"/>
 
         </FrameLayout>
+
+         </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
     </LinearLayout>
 
