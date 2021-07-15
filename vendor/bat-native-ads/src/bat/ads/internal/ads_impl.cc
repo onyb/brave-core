@@ -408,7 +408,7 @@ AdContentInfo::LikeAction AdsImpl::ToggleAdThumbDown(
   auto like_action = Client::Get()->ToggleAdThumbDown(ad_content.creative_instance_id,
                                                       ad_content.creative_set_id, ad_content.like_action);
   if (like_action == AdContentInfo::LikeAction::kThumbsDown) {
-    account_->Deposit(ad_content.creative_instance_id, action.ad_type,
+    account_->Deposit(ad_content.creative_instance_id, ad_content.type,
                       ConfirmationType::kDownvoted);
   }
 
@@ -680,7 +680,6 @@ void AdsImpl::OnTransactionsChanged() {
 }
 
 void AdsImpl::OnCatalogUpdated(const Catalog& catalog) {
-  account_->SetCatalogIssuers(catalog.GetIssuers());
   account_->TopUpUnblindedTokens();
 
   epsilon_greedy_bandit_resource_->LoadFromCatalog(catalog);
@@ -781,13 +780,13 @@ void AdsImpl::OnDidServeInlineContentAd(const InlineContentAdInfo& ad) {
 }
 
 void AdsImpl::OnInlineContentAdViewed(const InlineContentAdInfo& ad) {
-  account_->Deposit(ad.creative_instance_id, ConfirmationType::kViewed);
+  account_->Deposit(ad.creative_instance_id, ad.type, ConfirmationType::kViewed);
 }
 
 void AdsImpl::OnInlineContentAdClicked(const InlineContentAdInfo& ad) {
   ad_transfer_->SetLastClickedAd(ad);
 
-  account_->Deposit(ad.creative_instance_id, ConfirmationType::kClicked);
+  account_->Deposit(ad.creative_instance_id, ad.type, ConfirmationType::kClicked);
 }
 
 void AdsImpl::OnInlineContentAdEventFailed(

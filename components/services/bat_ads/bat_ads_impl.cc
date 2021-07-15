@@ -25,10 +25,10 @@ namespace bat_ads {
 
 namespace {
 
-ads::AdContentInfo::LikeAction ToAdsLikeAction(
-    const int action) {
-  return static_cast<ads::AdContentInfo::LikeAction>(action);
-}
+// ads::AdContentInfo::LikeAction ToAdsLikeAction(
+//     const int action) {
+//   return static_cast<ads::AdContentInfo::LikeAction>(action);
+// }
 
 ads::CategoryContentInfo::OptAction ToAdsOptAction(
     const int action) {
@@ -218,8 +218,10 @@ void BatAdsImpl::ToggleAdThumbUp(
     const std::string& creative_set_id,
     const int action,
     ToggleAdThumbUpCallback callback) {
-  const ads::AdContentInfo::LikeAction like_action = ads_->ToggleAdThumbUp(
-      creative_instance_id, creative_set_id, ToAdsLikeAction(action));
+  // const ads::AdContentInfo::LikeAction like_action = ads_->ToggleAdThumbUp(
+  //     creative_instance_id, creative_set_id, ToAdsLikeAction(action));
+  ads::AdContentInfo ad_content;
+  const ads::AdContentInfo::LikeAction like_action = ads_->ToggleAdThumbUp(ad_content);
   std::move(callback).Run(creative_instance_id, static_cast<int>(like_action));
 }
 
@@ -228,8 +230,10 @@ void BatAdsImpl::ToggleAdThumbDown(
     const std::string& creative_set_id,
     const int action,
     ToggleAdThumbDownCallback callback) {
-  const ads::AdContentInfo::LikeAction like_action = ads_->ToggleAdThumbDown(
-      creative_instance_id, creative_set_id, ToAdsLikeAction(action));
+  // const ads::AdContentInfo::LikeAction like_action = ads_->ToggleAdThumbDown(
+  //     creative_instance_id, creative_set_id, ToAdsLikeAction(action));
+  ads::AdContentInfo ad_content;
+  const ads::AdContentInfo::LikeAction like_action = ads_->ToggleAdThumbDown(ad_content);
   std::move(callback).Run(creative_instance_id, static_cast<int>(like_action));
 }
 

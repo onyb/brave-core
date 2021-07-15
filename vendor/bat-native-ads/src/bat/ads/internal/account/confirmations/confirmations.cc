@@ -16,7 +16,6 @@
 #include "bat/ads/confirmation_type.h"
 #include "bat/ads/internal/account/ad_rewards/ad_rewards_util.h"
 #include "bat/ads/internal/account/confirmations/confirmations_state.h"
-#include "bat/ads/internal/catalog/catalog_issuers_info.h"
 #include "bat/ads/internal/logging.h"
 #include "bat/ads/internal/privacy/privacy_util.h"
 #include "bat/ads/internal/privacy/tokens/token_generator_interface.h"
@@ -56,33 +55,6 @@ void Confirmations::AddObserver(ConfirmationsObserver* observer) {
 void Confirmations::RemoveObserver(ConfirmationsObserver* observer) {
   DCHECK(observer);
   observers_.RemoveObserver(observer);
-}
-
-void Confirmations::SetCatalogIssuers(
-    const CatalogIssuersInfo& catalog_issuers) {
-  BLOG(1, "SetCatalogIssuers:");
-  BLOG(1, "  Public key: " << catalog_issuers.public_key);
-  BLOG(1, "  Issuers:");
-
-  for (const auto& issuer : catalog_issuers.issuers) {
-    BLOG(1, "    Name: " << issuer.name);
-    BLOG(1, "    Public key: " << issuer.public_key);
-  }
-
-  const CatalogIssuersInfo current_catalog_issuers =
-      ConfirmationsState::Get()->get_catalog_issuers();
-
-  const bool public_key_was_rotated =
-      !current_catalog_issuers.public_key.empty() &&
-      current_catalog_issuers.public_key != catalog_issuers.public_key;
-
-  ConfirmationsState::Get()->set_catalog_issuers(catalog_issuers);
-
-  if (public_key_was_rotated) {
-    ConfirmationsState::Get()->get_unblinded_tokens()->RemoveAllTokens();
-  }
-
-  ConfirmationsState::Get()->Save();
 }
 
 void Confirmations::ConfirmAd(const std::string& creative_instance_id,
@@ -261,26 +233,26 @@ void Confirmations::OnDidRedeemUnblindedToken(
       {unblinded_payment_token});
   ConfirmationsState::Get()->Save();
 
-  const CatalogIssuersInfo catalog_issuers =
-      ConfirmationsState::Get()->get_catalog_issuers();
+  // const CatalogIssuersInfo catalog_issuers =
+  //     ConfirmationsState::Get()->get_catalog_issuers();
 
-  const base::Optional<double> estimated_redemption_value =
-      catalog_issuers.GetEstimatedRedemptionValue(
-          unblinded_payment_token.public_key.encode_base64());
-  if (!estimated_redemption_value) {
-    BLOG(1, "Invalid estimated redemption value");
-    OnFailedToRedeemUnblindedToken(confirmation, /* should_retry */ false);
-    return;
-  }
+  // const base::Optional<double> estimated_redemption_value =
+  //     catalog_issuers.GetEstimatedRedemptionValue(
+  //         unblinded_payment_token.public_key.encode_base64());
+  // if (!estimated_redemption_value) {
+  //   BLOG(1, "Invalid estimated redemption value");
+  //   OnFailedToRedeemUnblindedToken(confirmation, /* should_retry */ false);
+  //   return;
+  // }
 
-  BLOG(1,
-       "Added 1 unblinded payment token with an estimated redemption value "
-       "of "
-           << *estimated_redemption_value << " BAT, you now have "
-           << ConfirmationsState::Get()->get_unblinded_payment_tokens()->Count()
-           << " unblinded payment tokens");
+  // BLOG(1,
+  //      "Added 1 unblinded payment token with an estimated redemption value "
+  //      "of "
+  //          << *estimated_redemption_value << " BAT, you now have "
+  //          << ConfirmationsState::Get()->get_unblinded_payment_tokens()->Count()
+  //          << " unblinded payment tokens");
 
-  NotifyConfirmAd(*estimated_redemption_value, confirmation);
+  // NotifyConfirmAd(*estimated_redemption_value, confirmation);
 }
 
 void Confirmations::OnFailedToRedeemUnblindedToken(

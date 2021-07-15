@@ -27,7 +27,6 @@ class RedeemUnblindedPaymentTokens;
 class RefillUnblindedTokens;
 class Statement;
 class Wallet;
-struct CatalogIssuersInfo;
 struct StatementInfo;
 struct WalletInfo;
 
@@ -45,8 +44,6 @@ class Account : public AdRewardsDelegate,
   bool SetWallet(const std::string& id, const std::string& seed);
 
   WalletInfo GetWallet() const;
-
-  void SetCatalogIssuers(const CatalogIssuersInfo& catalog_issuers);
 
   void Deposit(const std::string& creative_instance_id,
                const AdType& ad_type,
@@ -79,8 +76,6 @@ class Account : public AdRewardsDelegate,
   void NotifyWalletChanged(const WalletInfo& wallet) const;
   void NotifyWalletRestored(const WalletInfo& wallet) const;
   void NotifyWalletInvalid() const;
-  void NotifyCatalogIssuersChanged(
-      const CatalogIssuersInfo& catalog_issuers) const;
   void NotifyAdRewardsChanged() const;
   void NotifyTransactionsChanged() const;
   void NotifyUnclearedTransactionsProcessed() const;

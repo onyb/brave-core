@@ -23,7 +23,6 @@ namespace ads {
 class AdRewards;
 class ConfirmationsState;
 class RedeemUnblindedToken;
-struct CatalogIssuersInfo;
 struct UnblindedTokenInfo;
 
 class Confirmations : public RedeemUnblindedTokenDelegate {
@@ -35,8 +34,6 @@ class Confirmations : public RedeemUnblindedTokenDelegate {
 
   void AddObserver(ConfirmationsObserver* observer);
   void RemoveObserver(ConfirmationsObserver* observer);
-
-  void SetCatalogIssuers(const CatalogIssuersInfo& catalog_issuers);
 
   void ConfirmAd(const std::string& creative_instance_id,
                  const AdType& ad_type,
