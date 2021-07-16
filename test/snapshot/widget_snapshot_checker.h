@@ -12,17 +12,16 @@ namespace views {
 class Widget;
 }
 
-class WidgetSnapshotChecker {
+class WidgetSnapshotChecker final {
  public:
   WidgetSnapshotChecker();
+  WidgetSnapshotChecker(const WidgetSnapshotChecker&) = delete;
+  WidgetSnapshotChecker& operator=(const WidgetSnapshotChecker&) = delete;
   ~WidgetSnapshotChecker();
 
   void CaptureAndCheckSnapshot(views::Widget* widget);
 
  private:
-  WidgetSnapshotChecker(const WidgetSnapshotChecker&) = delete;
-  WidgetSnapshotChecker& operator=(const WidgetSnapshotChecker&) = delete;
-
   base::FilePath GetSnapshotPath();
   base::FilePath GetFailedSnapshotDir();
   base::FilePath GetTestRelativeDir();

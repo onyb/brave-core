@@ -33,15 +33,26 @@ base::StringPiece GetPlatformName() {
   return "mac";
 #elif defined(OS_LINUX)
   return "linux";
-#endif
+#endif  // defined(OS_WIN)
+}
+
+bool IsSnapshotCheckingSupported() {
+  // TODO(https://github.com/brave/brave-browser/issues/17024): Add snapshots
+  // checking support for MacOS.
+#if defined(OS_MAC)
+  return false;
+#else
+  return true;
+#endif  // defined(OS_MAC)
 }
 
 bool WriteFailedSnapshotFile(scoped_refptr<base::RefCountedMemory> data,
                              base::FilePath failed_snapshot_dir) {
   base::ScopedAllowBlockingForTesting allow_block;
-  if (!base::CreateDirectoryAndGetError(failed_snapshot_dir, nullptr /*error*/))
+  if (!base::CreateDirectoryAndGetError(failed_snapshot_dir, nullptr /*error*/)) {
     return false;
-  auto failed_snapshot_path =
+  }
+  const base::FilePath failed_snapshot_path =
       failed_snapshot_dir.AppendASCII(kSnapshotFileName);
 
   if (!base::WriteFile(failed_snapshot_path, data->front_as<char>(),
@@ -54,47 +65,49 @@ bool WriteFailedSnapshotFile(scoped_refptr<base::RefCountedMemory> data,
 
 void Capture(views::Widget* widget, gfx::Image* image) {
   // Wait for painting complete.
-  auto* compositor = widget->GetCompositor();
+  ui::Compositor* compositor = widget->GetCompositor();
   ui::DrawWaiterForTest::WaitForCompositingEnded(compositor);
 
-  gfx::Rect widget_bounds = widget->GetRootView()->bounds();
+#if defined(USE_AURA)
+  const gfx::Rect widget_bounds = widget->GetRootView()->bounds();
   const auto on_got_snapshot = [](base::RunLoop* run_loop, gfx::Image* image,
                                   gfx::Image got_image) {
     *image = got_image;
     run_loop->Quit();
   };
-
   base::RunLoop run_loop;
-#if defined(USE_AURA)
   ui::GrabWindowSnapshotAsyncAura(
-#else
-  ui::GrabWindowSnapshotAsync(
-#endif  // defined(USE_AURA)
       widget->GetNativeWindow(), widget_bounds,
       base::BindOnce(on_got_snapshot, &run_loop, image));
   run_loop.Run();
+#endif  // defined(USE_AURA)
 }
 
 bool CompareSnaphot(scoped_refptr<base::RefCountedMemory> png_bytes,
                     base::FilePath snapshot_path) {
   base::ScopedAllowBlockingForTesting allow_blocking;
 
-  if (!png_bytes->size())
+  if (!png_bytes->size()) {
     return false;
+  }
 
   std::string file_contents;
-  if (!base::ReadFileToString(snapshot_path, &file_contents))
+  if (!base::ReadFileToString(snapshot_path, &file_contents)) {
     return false;
+  }
 
-  if (file_contents.size() == 0)
+  if (file_contents.size() == 0) {
     return false;
+  }
 
-  if (png_bytes->size() != file_contents.size())
+  if (png_bytes->size() != file_contents.size()) {
     return false;
+  }
 
   if (!std::equal(file_contents.begin(), file_contents.end(),
-                  png_bytes->front_as<char>()))
+                  png_bytes->front_as<char>())) {
     return false;
+  }
 
   return true;
 }
@@ -119,13 +132,16 @@ WidgetSnapshotChecker::WidgetSnapshotChecker() = default;
 WidgetSnapshotChecker::~WidgetSnapshotChecker() = default;
 
 void WidgetSnapshotChecker::CaptureAndCheckSnapshot(views::Widget* widget) {
+  if (!IsSnapshotCheckingSupported())
+    return;
+
   ++snapshot_index_;
 
   gfx::Image snapshot;
   Capture(widget, &snapshot);
-  auto png_bytes = snapshot.As1xPNGBytes();
+  const auto png_bytes = snapshot.As1xPNGBytes();
 
-  auto snapshot_path = GetSnapshotPath();
+  const base::FilePath snapshot_path = GetSnapshotPath();
   const bool is_equal = CompareSnaphot(png_bytes, snapshot_path);
   base::FilePath failed_snapshot_dir = GetFailedSnapshotDir();
   if (!is_equal) {
