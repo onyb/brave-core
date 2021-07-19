@@ -15,6 +15,8 @@
 #include "base/memory/weak_ptr.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/time/time.h"
+#include "bat/ads/ad_content_info.h"
+#include "bat/ads/ad_type.h"
 #include "bat/ledger/mojom_structs.h"
 #include "brave/browser/brave_ads/ads_service_factory.h"
 #include "brave/browser/brave_rewards/rewards_service_factory.h"
@@ -1143,20 +1145,45 @@ void RewardsDOMHandler::OnGetAdsHistory(const base::ListValue& ads_history) {
 }
 
 void RewardsDOMHandler::ToggleAdThumbUp(const base::ListValue* args) {
-  CHECK_EQ(3U, args->GetSize());
+  CHECK_EQ(1U, args->GetSize());
   if (!ads_service_) {
     return;
   }
 
-  AllowJavascript();
+  ads::AdContentInfo ad_content;
+  base::Value list_element = args->GetList()[0].Clone();
+  base::DictionaryValue* ad_content_dict = nullptr;
+  if (list_element.GetAsDictionary(&ad_content_dict)) {
+    base::Optional<int> ad_type =
+        ad_content_dict->FindIntKey("AdType");
+    if (ad_type && ad_type.has_value()) {
+      ad_content.type = ads::AdType(
+          static_cast<ads::AdType::Value>(ad_type.value()));
+    } else {
+      ad_content.type = ads::AdType::kUndefined;
+    }
 
-  const std::string id = args->GetList()[0].GetString();
-  const std::string creative_set_id = args->GetList()[1].GetString();
-  const int action = args->GetList()[2].GetInt();
-  ads_service_->ToggleAdThumbUp(
-      id, creative_set_id, action,
-      base::BindOnce(&RewardsDOMHandler::OnToggleAdThumbUp,
-                     weak_factory_.GetWeakPtr()));
+    std::string* creative_instance_id =
+        ad_content_dict->FindStringKey("creativeInstanceId");
+    if (creative_instance_id) {
+      ad_content.creative_instance_id = *creative_instance_id;
+    }
+  }
+
+  // CHECK_EQ(3U, args->GetSize());
+  // if (!ads_service_) {
+  //   return;
+  // }
+
+  // AllowJavascript();
+
+  // const std::string id = args->GetList()[0].GetString();
+  // const std::string creative_set_id = args->GetList()[1].GetString();
+  // const int action = args->GetList()[2].GetInt();
+  // ads_service_->ToggleAdThumbUp(
+  //     id, creative_set_id, action,
+  //     base::BindOnce(&RewardsDOMHandler::OnToggleAdThumbUp,
+  //                    weak_factory_.GetWeakPtr()));
 }
 
 void RewardsDOMHandler::OnToggleAdThumbUp(

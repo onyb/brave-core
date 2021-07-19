@@ -1229,6 +1229,8 @@ void AdsServiceImpl::OnGetAdsHistory(OnGetAdsHistoryCallback callback,
   base::ListValue list;
   for (const auto& item : ads_history.items) {
     base::DictionaryValue ad_content_dictionary;
+    ad_content_dictionary.SetKey("adType",
+                                 base::Value(item.ad_content.type.value()));
     ad_content_dictionary.SetKey(
         "creativeInstanceId",
         base::Value(item.ad_content.creative_instance_id));

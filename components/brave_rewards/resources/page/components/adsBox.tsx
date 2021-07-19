@@ -319,6 +319,7 @@ class AdsBox extends React.Component<Props, State> {
     }
 
     const adContent: Rewards.AdContent = {
+      adType: adHistory.adContent.adType,
       creativeInstanceId: adHistory.adContent.creativeInstanceId,
       creativeSetId: adHistory.adContent.creativeSetId,
       brand: adHistory.adContent.brand,
