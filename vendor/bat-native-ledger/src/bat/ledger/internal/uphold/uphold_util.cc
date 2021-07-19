@@ -188,7 +188,7 @@ bool one_of(T&& t, Ts&&... ts) {
 }
 
 void LogWalletStatusChange(LedgerImpl* ledger,
-                           base::Optional<type::WalletStatus> from,
+                           absl::optional<type::WalletStatus> from,
                            type::WalletStatus to) {
   DCHECK(ledger);
   DCHECK(!from ||

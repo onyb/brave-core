@@ -1427,7 +1427,7 @@ TEST_P(DisconnectWallet, Paths) {
             callback(rewards_unlink_wallet_response);
           });
 
-  mock_ledger_impl_->ready_state_ = ledger::LedgerImpl::ReadyState::kReady;
+  mock_ledger_impl_->SetInitializedForTesting();
 
   ON_CALL(*mock_ledger_impl_, database())
       .WillByDefault(Return(mock_database_.get()));

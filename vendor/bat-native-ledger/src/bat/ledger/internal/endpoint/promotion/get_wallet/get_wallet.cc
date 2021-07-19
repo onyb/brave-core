@@ -83,7 +83,7 @@ type::Result GetWallet::ParseBody(const std::string& body,
   *custodian = {};
   *linked = {};
 
-  base::Optional<base::Value> value = base::JSONReader::Read(body);
+  absl::optional<base::Value> value = base::JSONReader::Read(body);
   if (!value || !value->is_dict()) {
     BLOG(0, "Invalid JSON");
     return type::Result::LEDGER_ERROR;
