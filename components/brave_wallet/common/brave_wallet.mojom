@@ -75,6 +75,13 @@ struct AssetTimePrice {
   string price;
 };
 
+struct AssetPrice {
+  string from_asset;
+  string to_asset;
+  string price;
+  string asset_24h_change;
+};
+
 struct SwapParams {
   string taker_address;
   string sell_amount;
@@ -116,7 +123,7 @@ interface WalletHandler {
                       array<string> walletAccountNames);
   LockWallet();
   UnlockWallet(string password) => (bool isWalletUnlocked);
-  GetAssetPrice(string asset) => (string price);
+  GetAssetPrice(array<string> from_assets, array<string> to_assets) => (array<AssetPrice> asset_prices);
   GetAssetPriceHistory(string asset, AssetPriceTimeframe timeframe) => (array<AssetTimePrice> values);
   GetPriceQuote(SwapParams params) => (SwapResponse response);
   GetTransactionPayload(SwapParams params) => (SwapResponse response);

@@ -78,21 +78,23 @@ void WalletHandler::UnlockWallet(const std::string& password,
   std::move(callback).Run(result);
 }
 
-void WalletHandler::GetAssetPrice(const std::string& asset,
+void WalletHandler::GetAssetPrice(const std::vector<std::string>& from_assets,
+                                  const std::vector<std::string>& to_assets,
                                   GetAssetPriceCallback callback) {
   auto* profile = Profile::FromWebUI(web_ui_);
   auto* asset_ratio_controller =
       GetBraveWalletService(profile)->asset_ratio_controller();
   asset_ratio_controller->GetPrice(
-      asset,
+      from_assets, to_assets,
       base::BindOnce(&WalletHandler::OnGetPrice, weak_ptr_factory_.GetWeakPtr(),
                      std::move(callback)));
 }
 
-void WalletHandler::OnGetPrice(GetAssetPriceCallback callback,
-                               bool success,
-                               const std::string& price) {
-  std::move(callback).Run(price);
+void WalletHandler::OnGetPrice(
+    GetAssetPriceCallback callback,
+    bool success,
+    std::vector<brave_wallet::mojom::AssetPricePtr> prices) {
+  std::move(callback).Run(std::move(prices));
 }
 
 void WalletHandler::GetAssetPriceHistory(

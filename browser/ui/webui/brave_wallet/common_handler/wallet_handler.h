@@ -38,7 +38,9 @@ class WalletHandler : public brave_wallet::mojom::WalletHandler {
   void GetWalletInfo(GetWalletInfoCallback) override;
   void LockWallet() override;
   void UnlockWallet(const std::string& password, UnlockWalletCallback) override;
-  void GetAssetPrice(const std::string& asset, GetAssetPriceCallback) override;
+  void GetAssetPrice(const std::vector<std::string>& from_assets,
+                     const std::vector<std::string>& to_assets,
+                     GetAssetPriceCallback) override;
   void GetAssetPriceHistory(const std::string& asset,
                             brave_wallet::mojom::AssetPriceTimeframe timeframe,
                             GetAssetPriceHistoryCallback) override;
@@ -57,7 +59,7 @@ class WalletHandler : public brave_wallet::mojom::WalletHandler {
  private:
   void OnGetPrice(GetAssetPriceCallback callback,
                   bool success,
-                  const std::string& price);
+                  std::vector<brave_wallet::mojom::AssetPricePtr> prices);
   void OnGetPriceHistory(
       GetAssetPriceHistoryCallback callback,
       bool success,

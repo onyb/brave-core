@@ -30,9 +30,12 @@ class AssetRatioController {
       scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory);
   ~AssetRatioController();
 
-  using GetPriceCallback =
-      base::OnceCallback<void(bool status, const std::string& price)>;
-  void GetPrice(const std::string& asset, GetPriceCallback callback);
+  using GetPriceCallback = base::OnceCallback<void(
+      bool status,
+      std::vector<brave_wallet::mojom::AssetPricePtr> prices)>;
+  void GetPrice(const std::vector<std::string>& from_assets,
+                const std::vector<std::string>& to_assets,
+                GetPriceCallback callback);
 
   using GetPriceHistoryCallback = base::OnceCallback<void(
       bool status,
@@ -41,14 +44,17 @@ class AssetRatioController {
   void GetPriceHistory(const std::string& asset,
                        brave_wallet::mojom::AssetPriceTimeframe timeframe,
                        GetPriceHistoryCallback callback);
-  static GURL GetPriceURL(const std::string& asset);
+  static GURL GetPriceURL(const std::vector<std::string>& from_assets,
+                          const std::vector<std::string>& to_assets);
   static GURL GetPriceHistoryURL(
       const std::string& asset,
       brave_wallet::mojom::AssetPriceTimeframe timeframe);
   static void SetBaseURLForTest(const GURL& base_url_for_test);
 
  private:
-  void OnGetPrice(GetPriceCallback callback,
+  void OnGetPrice(std::vector<std::string> from_assets,
+                  std::vector<std::string> to_assets,
+                  GetPriceCallback callback,
                   const int status,
                   const std::string& body,
                   const std::map<std::string, std::string>& headers);
